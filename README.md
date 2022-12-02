@@ -2,7 +2,7 @@
 
 ## Development
 
-1. Create `.env` file.
+1. Create a new `.env` file.
 2. Populate with environment variable keys from `.env.template` and add your values.
 3. Install dependencies `npm install`.
 4. Run app `node app.js`.
