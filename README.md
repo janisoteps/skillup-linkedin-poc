@@ -9,5 +9,6 @@
 5. Check it out on http://localhost:3006
 
 ## Further reading
+
 Implementation documentation: https://www.passportjs.org/packages/passport-linkedin-oauth2
 
