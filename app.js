@@ -1,11 +1,22 @@
 require('dotenv').config();
 const passport = require("passport");
 const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
-const session = require('express-session')
+const cookieSession = require('cookie-session');
 const express = require("express");
 const homeRoute = require('./routes/home');
+const cookieParser = require ("cookie-parser");
 
 const app = express();
+
+app.use(cookieParser());
+app.use(cookieSession({
+    name: 'session',
+    keys: ['session'],
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    maxAge: 90 * 24 * 60 * 60 * 1000 // 90 days
+}));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -15,18 +26,22 @@ const LINKEDIN_SECRET = process.env.LINKEDIN_SECRET;
 const port = 3006;
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+    const emailDict = (Array.isArray(user.emails) && user.emails.length > 0) ? user.emails[0] : null;
+    const photoDict = (Array.isArray(user.photos) && user.photos.length > 0) ? user.photos[0] : null;
+
+    const skinnyUser = {
+        id: user.id,
+        name: user.name,
+        email: !!emailDict ? emailDict?.value : null,
+        photo: !!photoDict ? photoDict?.value : null
+    };
+    done(null, skinnyUser);
 });
 
 passport.deserializeUser((user, done) => {
     done(null, user);
 });
 
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true
-}));
 app.use(passport.initialize({}));
 app.use(passport.session({}));
 
@@ -81,8 +96,8 @@ app.get("/", (req, res) => {
 app.get('/my-profile', checkPassportAuthenticated, function (req, res) {
     const name = req.user.name.givenName;
     const family = req.user.name.familyName;
-    const photo = req.user.photos[0].value;
-    const email = req.user.emails[0].value;
+    const photo = req.user.photo;
+    const email = req.user.email;
 
     res.send(
         `<h1>${name} Profile</h1><div style="font-size:140%"> <p>User is Logged In </p>
@@ -109,12 +124,8 @@ app.get('/api/protected-test', checkPassportAuthenticated, function (req, res) {
 })
 
 app.get('/logout', function (req, res) {
-    req.session.destroy(function (err) {
-        if (err) {
-            console.log(err);
-        }
-        res.redirect('/');
-    });
+    req.logout();
+    res.redirect('/');
 });
 
 app.listen(port, () => {

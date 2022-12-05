@@ -3,8 +3,8 @@ module.exports = {
         if (req.user) {
             const name = req.user.name.givenName;
             const family = req.user.name.familyName;
-            const photo = req.user.photos[0].value;
-            const email = req.user.emails[0].value;
+            const photo = req.user.photo;
+            const email = req.user.email;
 
             res.send(
                 `<div style="font-size:140%"> <p>User is Logged In </p>
