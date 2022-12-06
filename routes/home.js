@@ -21,7 +21,7 @@ module.exports = {
                 <p>User is not Logged In</p>
                  <button style="background-color: cornflowerblue; font-size: 2rem; 
                  padding: 10px; border-width: 0; border-radius: 10px; cursor: pointer" 
-                 onclick="window.location='/auth/linkedIn'">LinkedIn login</button>
+                 onclick="window.location='/auth/linkedin'">LinkedIn login</button>
                 </div>
                 `
             );
