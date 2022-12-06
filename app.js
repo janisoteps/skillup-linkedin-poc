@@ -10,8 +10,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(cookieSession({
-    name: 'session',
-    keys: ['session'],
+    name: 'skillup_session',
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
@@ -79,10 +78,8 @@ checkPassportAuthenticated = (req, res, next) => {
 
 app.get('/auth/linkedin',
     passport.authenticate('linkedin'),
-    function (req, res) {
-        // The request will be redirected to LinkedIn for authentication, so this
-        // function will not be called.
-    });
+    () => {}
+);
 
 app.get('/auth/linkedin/callback', passport.authenticate('linkedin', {
     successRedirect: '/',
